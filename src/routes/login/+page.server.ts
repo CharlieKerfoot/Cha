@@ -52,6 +52,13 @@ export const actions: Actions = {
     if (error.message.toLowerCase().includes('invalid login credentials')) {
       const { data, error: signUpError } = await locals.supabase.auth.signUp({ email, password });
       if (signUpError) {
+        if (signUpError.message.toLowerCase().includes('already registered')) {
+          return fail(400, {
+            error:
+              'This email has an account, but that password doesn’t match it. (If you previously signed in with an email link, the account has no password — use a different email, or ask us to reset it.)',
+            email
+          });
+        }
         return fail(400, { error: signUpError.message, email });
       }
       if (!data.session) {
