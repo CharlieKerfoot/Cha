@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { NEIGHBORHOODS } from '$lib/geo';
+import { nearestNeighborhood } from '$lib/geo';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
@@ -19,16 +19,16 @@ export const actions: Actions = {
     const user = locals.user!;
     const form = await request.formData();
 
-    const neighborhood = String(form.get('neighborhood') ?? '');
+    const lat = Number(form.get('lat'));
+    const lng = Number(form.get('lng'));
     const radius = Number(form.get('radius_miles') ?? 3);
     const shifts = form.getAll('shifts').map(String);
     const bio = String(form.get('bio') ?? '').trim();
     const videoUrl = String(form.get('video_url') ?? '').trim();
     const basics = form.get('basics_confirmed') === 'on';
 
-    const coords = NEIGHBORHOODS[neighborhood];
-    if (!coords) {
-      return fail(400, { error: 'Pick your neighborhood.' });
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < 36.5 || lat > 39 || lng < -123.5 || lng > -121) {
+      return fail(400, { error: 'Drop your pin somewhere in the Bay Area.' });
     }
     if (shifts.length === 0) {
       return fail(400, { error: 'Select at least one shift you can work.' });
@@ -39,9 +39,9 @@ export const actions: Actions = {
 
     const { error } = await locals.supabase.from('seekers').upsert({
       profile_id: user.id,
-      neighborhood,
-      lat: coords.lat,
-      lng: coords.lng,
+      neighborhood: nearestNeighborhood(lat, lng),
+      lat,
+      lng,
       radius_miles: Math.min(Math.max(radius, 0.5), 15),
       shifts,
       bio,

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import ShopsMap from '$lib/components/ShopsMap.svelte';
   import { describeShifts } from '$lib/availability';
   import type { PageData } from './$types';
 
@@ -12,27 +13,41 @@
     hired: 'Hired 🎉',
     passed: 'Not this time'
   };
+
+  let shopPins = $derived(
+    data.matches.map((m) => ({
+      id: m.shop.id,
+      name: m.shop.name,
+      lat: m.shop.lat,
+      lng: m.shop.lng,
+      website: m.shop.website || undefined,
+      label: `${m.distance.toFixed(1)} mi · ${m.score} fit`
+    }))
+  );
 </script>
 
 <div class="head">
-  <div>
-    <h1>Your matches</h1>
-    <p class="muted">
-      Shops within {data.seeker.radius_miles} mi of {data.seeker.neighborhood}, ranked by distance
-      and shift fit.
-      {#if !data.seeker.video_url}
-        <a href="/seeker/profile">Record your intro video</a> to stand out.
-      {/if}
-    </p>
-  </div>
+  <h1>Your matches</h1>
+  <p class="muted">
+    Shops inside your {data.seeker.radius_miles} mi range, ranked by distance and shift fit.
+    {#if !data.seeker.video_url}
+      <a href="/seeker/profile">Record your intro video</a> to stand out.
+    {/if}
+  </p>
 </div>
 
-{#if data.matches.length === 0}
+{#if data.matches.length > 0}
+  <ShopsMap
+    center={{ lat: data.seeker.lat, lng: data.seeker.lng }}
+    radiusMiles={Number(data.seeker.radius_miles)}
+    shops={shopPins}
+  />
+{:else}
   <div class="card empty">
     <h3>No shops in range yet</h3>
     <p class="muted">
-      Try widening your radius or adding more shifts on
-      <a href="/seeker/profile">your profile</a>.
+      Shops are joining cha now, so check back soon. Meanwhile, try widening your radius or
+      adding more shifts on <a href="/seeker/profile">your profile</a>.
     </p>
   </div>
 {/if}
@@ -42,20 +57,22 @@
     <div class="card match">
       <div class="score">
         <span class="score-pill">{m.score}</span>
-        <span class="muted fit">fit</span>
+        <span class="meta-mono">fit</span>
       </div>
       <div class="body">
         <h3>{m.shop.name}</h3>
-        <p class="meta">
-          <span class="badge">{m.shop.neighborhood}</span>
-          <span class="badge">{m.distance.toFixed(1)} mi away</span>
+        <p class="meta-mono line">
+          {m.shop.neighborhood} · {m.distance.toFixed(1)} mi
           {#if m.job.pay_min}
-            <span class="badge">${m.job.pay_min}–{m.job.pay_max}/hr + tips</span>
+            · ${m.job.pay_min}–{m.job.pay_max}/hr
           {/if}
-          <span class="badge">{Math.round(m.overlap * 100)}% shift match</span>
+          · {Math.round(m.overlap * 100)}% shift match
         </p>
         <p class="muted">{m.shop.vibe}</p>
-        <p class="shifts muted">Needs: {describeShifts(m.job.shifts)}</p>
+        <p class="meta-mono line">Needs · {describeShifts(m.job.shifts)}</p>
+        {#if m.shop.website}
+          <a href={m.shop.website} target="_blank" rel="noopener noreferrer">Visit their website ↗</a>
+        {/if}
       </div>
       <div class="action">
         {#if m.appliedStatus}
@@ -80,6 +97,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    margin-top: 1rem;
   }
 
   .match {
@@ -96,10 +114,6 @@
     min-width: 3.4rem;
   }
 
-  .fit {
-    font-size: 0.75rem;
-  }
-
   .body {
     flex: 1;
   }
@@ -108,15 +122,12 @@
     margin-bottom: 0.25rem;
   }
 
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin: 0 0 0.4rem;
-  }
-
   .body p {
     margin: 0.15rem 0;
+  }
+
+  .line {
+    margin: 0.2rem 0;
   }
 
   .action {
@@ -124,7 +135,7 @@
   }
 
   .applied {
-    color: var(--good);
+    color: var(--green);
     font-weight: 600;
     font-size: 0.92rem;
     white-space: nowrap;

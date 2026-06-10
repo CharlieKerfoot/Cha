@@ -18,6 +18,8 @@ export const NEIGHBORHOODS: Record<string, { lat: number; lng: number }> = {
 
 export const NEIGHBORHOOD_NAMES = Object.keys(NEIGHBORHOODS);
 
+export const SF_CENTER = { lat: 37.7749, lng: -122.4194 };
+
 const EARTH_RADIUS_MILES = 3958.8;
 
 export function distanceMiles(
@@ -31,4 +33,18 @@ export function distanceMiles(
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * EARTH_RADIUS_MILES * Math.asin(Math.sqrt(h));
+}
+
+/** Closest named neighborhood — used as a human label for a map pin. */
+export function nearestNeighborhood(lat: number, lng: number): string {
+  let best = 'San Francisco';
+  let bestDistance = Infinity;
+  for (const [name, center] of Object.entries(NEIGHBORHOODS)) {
+    const d = distanceMiles({ lat, lng }, center);
+    if (d < bestDistance) {
+      bestDistance = d;
+      best = name;
+    }
+  }
+  return best;
 }

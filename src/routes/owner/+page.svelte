@@ -36,7 +36,7 @@
       {#each data.applications as app (app.id)}
         {@const seeker = app.seekers}
         {@const name = seeker?.profiles?.display_name ?? 'Candidate'}
-        <div class="card person">
+        <div class="card person ticket">
           <div class="video">
             {#if seeker?.video_url}
               <!-- svelte-ignore a11y_media_has_caption -->
@@ -47,16 +47,19 @@
           </div>
           <div class="body">
             <h3>{name}</h3>
-            <p class="meta">
-              <span class="badge">{seeker?.neighborhood}</span>
+            <p class="meta-mono">
+              {seeker?.neighborhood}
               {#if seeker?.basics_confirmed}
-                <span class="badge ok">✓ Basics confirmed</span>
+                · basics ✓
               {/if}
             </p>
             <p class="muted">{seeker?.bio}</p>
-            <p class="muted shifts">Can work — {describeShifts(seeker?.shifts ?? [])}</p>
+            <p class="meta-mono">Can work · {describeShifts(seeker?.shifts ?? [])}</p>
           </div>
           <div class="action">
+            {#if app.status === 'hired'}
+              <span class="stamp">Hired</span>
+            {/if}
             <form method="POST" action="?/status" use:enhance>
               <input type="hidden" name="id" value={app.id} />
               <label for="status-{app.id}" class="sr-only">Status</label>
@@ -82,7 +85,7 @@
     <h2>Candidates near you</h2>
     <p class="muted">
       People looking for coffee work whose range covers {data.shop.name}, ranked by distance and
-      shift fit. They haven't applied (yet) — but this is your hiring pool.
+      shift fit. They haven't applied yet, but this is your hiring pool.
     </p>
     <div class="list">
       {#each data.pool as p (p.seeker.profile_id)}
@@ -101,16 +104,15 @@
           </div>
           <div class="body">
             <h3>{p.seeker.profiles?.display_name ?? 'Candidate'}</h3>
-            <p class="meta">
-              <span class="badge">{p.seeker.neighborhood}</span>
-              <span class="badge">{p.distance.toFixed(1)} mi away</span>
-              <span class="badge">{Math.round(p.overlap * 100)}% shift match</span>
+            <p class="meta-mono">
+              {p.seeker.neighborhood} · {p.distance.toFixed(1)} mi · {Math.round(p.overlap * 100)}%
+              fit
               {#if p.seeker.basics_confirmed}
-                <span class="badge ok">✓ Basics confirmed</span>
+                · basics ✓
               {/if}
             </p>
             <p class="muted">{p.seeker.bio}</p>
-            <p class="muted shifts">Can work — {describeShifts(p.seeker.shifts)}</p>
+            <p class="meta-mono">Can work · {describeShifts(p.seeker.shifts)}</p>
           </div>
         </div>
       {/each}
@@ -143,6 +145,28 @@
     gap: 1rem;
     align-items: flex-start;
     flex-wrap: wrap;
+  }
+
+  /* Receipt ticket: dashed perforation along the top edge */
+  .ticket {
+    position: relative;
+    padding-top: 1.5rem;
+  }
+
+  .ticket::before {
+    content: '';
+    position: absolute;
+    top: 0.55rem;
+    left: 1rem;
+    right: 1rem;
+    border-top: 1.5px dashed var(--line);
+  }
+
+  .action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
   }
 
   .score {
@@ -185,18 +209,6 @@
 
   .body h3 {
     margin-bottom: 0.25rem;
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin: 0 0 0.4rem;
-  }
-
-  .badge.ok {
-    color: var(--good);
-    border-color: var(--good);
   }
 
   .body p {

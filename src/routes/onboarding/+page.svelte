@@ -71,8 +71,8 @@
   }
 
   .role.active {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
+    border-color: var(--red);
+    box-shadow: 0 0 0 1px var(--red);
   }
 
   .role input {

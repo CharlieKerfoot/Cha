@@ -1,32 +1,57 @@
 <script lang="ts">
   import '../app.css';
-  import favicon from '$lib/assets/favicon.svg';
+  import { page } from '$app/state';
   import type { LayoutData } from './$types';
 
   let { data, children }: { data: LayoutData; children: any } = $props();
+
+  const seekerTabs = [
+    ['/seeker', 'Matches'],
+    ['/seeker/applications', 'Applied'],
+    ['/seeker/profile', 'Profile']
+  ] as const;
+
+  const ownerTabs = [
+    ['/owner', 'Dashboard'],
+    ['/owner/jobs/new', 'Post a job']
+  ] as const;
+
+  let tabs = $derived(
+    data.profile?.role === 'seeker' ? seekerTabs : data.profile?.role === 'owner' ? ownerTabs : []
+  );
+
+  function isActive(href: string): boolean {
+    return page.url.pathname === href;
+  }
 </script>
 
 <svelte:head>
-  <link rel="icon" href={favicon} />
-  <title>cha — coffee jobs, good vibes</title>
+  <title>cha · hiring for SF coffee shops</title>
 </svelte:head>
 
 <header>
   <nav>
-    <a class="logo" href="/">cha ☕</a>
-    <div class="links">
-      {#if data.profile?.role === 'seeker'}
-        <a href="/seeker">Matches</a>
-        <a href="/seeker/profile">My profile</a>
-      {:else if data.profile?.role === 'owner'}
-        <a href="/owner">Dashboard</a>
-      {/if}
+    <a class="logo" href="/" aria-label="cha home">
+      <span class="stamp-mark">cha</span>
+    </a>
+
+    {#if tabs.length > 0}
+      <div class="tabs" role="navigation" aria-label="Main">
+        {#each tabs as [href, label] (href)}
+          <a {href} class="tab" class:active={isActive(href)} aria-current={isActive(href) ? 'page' : undefined}>
+            {label}
+          </a>
+        {/each}
+      </div>
+    {/if}
+
+    <div class="session">
       {#if data.session}
         <form method="POST" action="/logout">
           <button class="linkish" type="submit">Sign out</button>
         </form>
       {:else}
-        <a href="/login">Sign in</a>
+        <a class="tab" href="/login">Sign in</a>
       {/if}
     </div>
   </nav>
@@ -38,56 +63,99 @@
 
 <style>
   header {
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    border-bottom: 1.5px solid var(--ink);
   }
 
   nav {
-    max-width: 920px;
+    max-width: 1080px;
     margin: 0 auto;
-    padding: 0.8rem 1.25rem;
+    padding: 0.7rem 1.25rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1.5rem;
   }
 
   .logo {
-    font-family: Georgia, serif;
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--espresso);
     text-decoration: none;
+    line-height: 0;
   }
 
-  .links {
-    display: flex;
+  .stamp-mark {
+    display: inline-flex;
     align-items: center;
-    gap: 1.1rem;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    font-family: var(--font-display);
+    font-variation-settings: 'SOFT' 60, 'WONK' 1;
+    font-weight: 650;
+    font-size: 1rem;
+    transform: rotate(-6deg);
+    line-height: 1;
   }
 
-  .links a {
-    color: var(--roast);
+  .tabs {
+    display: flex;
+    gap: 0.4rem;
+    flex: 1;
+  }
+
+  .tab {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
+    padding: 0.35rem 0.7rem;
+    border: 1.5px solid transparent;
+    border-radius: 4px;
   }
 
-  .links a:hover {
-    color: var(--accent);
+  .tab:hover {
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .tab.active {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--paper);
+  }
+
+  .session {
+    margin-left: auto;
   }
 
   .linkish {
     background: none;
     border: none;
-    color: var(--roast);
-    font: inherit;
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
     cursor: pointer;
-    padding: 0;
+    padding: 0.35rem 0;
   }
 
   .linkish:hover {
-    color: var(--accent);
+    color: var(--ink);
+  }
+
+  @media (max-width: 560px) {
+    nav {
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .tabs {
+      order: 3;
+      width: 100%;
+    }
   }
 </style>

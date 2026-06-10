@@ -28,6 +28,7 @@ export interface Shop {
   lat: number;
   lng: number;
   vibe: string;
+  website: string;
 }
 
 export interface Job {

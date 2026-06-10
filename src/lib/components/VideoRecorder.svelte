@@ -123,7 +123,7 @@
 
 <style>
   .recorder {
-    border: 1.5px dashed var(--latte);
+    border: 1.5px dashed var(--line);
     border-radius: 12px;
     padding: 1rem;
     background: var(--paper);
@@ -152,7 +152,7 @@
   .countdown {
     font-weight: 700;
     font-size: 1.1rem;
-    color: var(--accent);
+    color: var(--red);
     min-width: 3rem;
   }
 </style>

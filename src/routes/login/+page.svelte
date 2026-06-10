@@ -87,7 +87,7 @@
   .toggle {
     background: none;
     border: none;
-    color: var(--roast);
+    color: var(--muted);
     font-size: 0.85rem;
     margin-top: 0.9rem;
     cursor: pointer;

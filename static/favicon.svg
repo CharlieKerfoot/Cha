@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- under-inked edge: the stamp didn't press evenly -->
+    <radialGradient id="ink" cx="0.38" cy="0.34" r="0.85">
+      <stop offset="0" stop-color="#E8442E"/>
+      <stop offset="0.78" stop-color="#E8442E"/>
+      <stop offset="1" stop-color="#D43A25"/>
+    </radialGradient>
+  </defs>
+  <g transform="rotate(-6 32 32)">
+    <circle cx="32" cy="32" r="30" fill="url(#ink)"/>
+    <!-- chunky lowercase c, drawn as an arc so no font is needed -->
+    <path d="M 43.5 21.5 A 14.5 14.5 0 1 0 43.5 42.5"
+      fill="none" stroke="#FBFAF4" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>

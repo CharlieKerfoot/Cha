@@ -2,8 +2,9 @@
   import { untrack } from 'svelte';
   import { enhance } from '$app/forms';
   import AvailabilityGrid from '$lib/components/AvailabilityGrid.svelte';
+  import LocationPicker from '$lib/components/LocationPicker.svelte';
   import VideoRecorder from '$lib/components/VideoRecorder.svelte';
-  import { NEIGHBORHOOD_NAMES } from '$lib/geo';
+  import { SF_CENTER } from '$lib/geo';
   import type { ActionData, PageData } from './$types';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -12,6 +13,8 @@
   const saved = untrack(() => data.seeker);
   let shifts = $state<string[]>(saved?.shifts ?? []);
   let radius = $state(Number(saved?.radius_miles ?? 3));
+  let lat = $state(Number(saved?.lat ?? SF_CENTER.lat));
+  let lng = $state(Number(saved?.lng ?? SF_CENTER.lng));
   let videoBlob: Blob | null = $state(null);
   let uploadError = $state('');
   let saving = $state(false);
@@ -57,13 +60,8 @@
   >
     <div class="card section">
       <h3>Where</h3>
-      <label for="neighborhood">Your neighborhood</label>
-      <select id="neighborhood" name="neighborhood" required>
-        <option value="" disabled selected={!data.seeker}>Pick one…</option>
-        {#each NEIGHBORHOOD_NAMES as n (n)}
-          <option value={n} selected={data.seeker?.neighborhood === n}>{n}</option>
-        {/each}
-      </select>
+      <p class="muted">Drop the pin where you live (roughly). The circle is your travel range.</p>
+      <LocationPicker bind:lat bind:lng radiusMiles={radius} />
 
       <label for="radius">How far you'd travel: <strong>{radius} mi</strong></label>
       <input

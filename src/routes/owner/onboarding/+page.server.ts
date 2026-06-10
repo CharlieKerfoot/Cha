@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { NEIGHBORHOODS } from '$lib/geo';
+import { nearestNeighborhood } from '$lib/geo';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -16,22 +16,31 @@ export const actions: Actions = {
   default: async ({ request, locals }) => {
     const form = await request.formData();
     const name = String(form.get('name') ?? '').trim();
-    const neighborhood = String(form.get('neighborhood') ?? '');
     const address = String(form.get('address') ?? '').trim();
     const vibe = String(form.get('vibe') ?? '').trim();
+    const websiteRaw = String(form.get('website') ?? '').trim();
+    const lat = Number(form.get('lat'));
+    const lng = Number(form.get('lng'));
 
-    const coords = NEIGHBORHOODS[neighborhood];
     if (!name) return fail(400, { error: "What's your shop called?" });
-    if (!coords) return fail(400, { error: 'Pick your neighborhood.' });
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < 36.5 || lat > 39 || lng < -123.5 || lng > -121) {
+      return fail(400, { error: 'Drop the pin on your shop.' });
+    }
+
+    let website = websiteRaw;
+    if (website && !/^https?:\/\//i.test(website)) {
+      website = `https://${website}`;
+    }
 
     const { error } = await locals.supabase.from('shops').insert({
       owner_id: locals.user!.id,
       name,
-      neighborhood,
+      neighborhood: nearestNeighborhood(lat, lng),
       address,
-      lat: coords.lat,
-      lng: coords.lng,
-      vibe
+      lat,
+      lng,
+      vibe,
+      website
     });
     if (error) return fail(500, { error: error.message });
 

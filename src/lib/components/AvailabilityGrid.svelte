@@ -57,7 +57,7 @@
 
   th {
     font-size: 0.78rem;
-    color: var(--roast);
+    color: var(--muted);
     font-weight: 600;
     text-align: left;
   }
@@ -78,11 +78,11 @@
   }
 
   .cell:hover {
-    border-color: var(--latte);
+    border-color: var(--line);
   }
 
   .cell.on {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--red);
+    border-color: var(--red);
   }
 </style>
