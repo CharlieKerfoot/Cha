@@ -4,7 +4,7 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
-  let usePassword = $state(false);
+  let usePassword = $state(true);
   let submitting = $state(false);
 </script>
 
@@ -53,7 +53,8 @@
 
         {#if usePassword}
           <label for="password">Password</label>
-          <input id="password" type="password" name="password" required />
+          <input id="password" type="password" name="password" required minlength="6" />
+          <p class="muted hint">New here? Same form — we'll create your account automatically.</p>
         {/if}
 
         {#if form?.error}
@@ -61,12 +62,12 @@
         {/if}
 
         <button class="btn submit" type="submit" disabled={submitting}>
-          {submitting ? 'One sec…' : usePassword ? 'Sign in' : 'Email me a sign-in link'}
+          {submitting ? 'One sec…' : usePassword ? 'Sign in / create account' : 'Email me a sign-in link'}
         </button>
       </form>
 
       <button class="toggle" type="button" onclick={() => (usePassword = !usePassword)}>
-        {usePassword ? 'Use a magic link instead' : 'Have a password? Sign in with it'}
+        {usePassword ? 'Email me a sign-in link instead' : 'Use a password instead'}
       </button>
     {/if}
   </div>
@@ -92,6 +93,11 @@
     cursor: pointer;
     text-decoration: underline;
     padding: 0;
+  }
+
+  .hint {
+    font-size: 0.82rem;
+    margin: 0.35rem 0 0;
   }
 
   input[type='password'] {

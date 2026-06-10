@@ -36,10 +36,34 @@ export const actions: Actions = {
     const form = await request.formData();
     const email = String(form.get('email') ?? '').trim();
     const password = String(form.get('password') ?? '');
-    const { error } = await locals.supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      return fail(400, { error: error.message, email, mode: 'password' });
+    if (!email.includes('@')) {
+      return fail(400, { error: 'Enter a valid email address.', email });
     }
-    redirect(303, '/onboarding');
+    if (password.length < 6) {
+      return fail(400, { error: 'Password needs at least 6 characters.', email });
+    }
+
+    const { error } = await locals.supabase.auth.signInWithPassword({ email, password });
+    if (!error) {
+      redirect(303, '/onboarding');
+    }
+
+    // No account yet (or wrong password) — try creating one on the spot.
+    if (error.message.toLowerCase().includes('invalid login credentials')) {
+      const { data, error: signUpError } = await locals.supabase.auth.signUp({ email, password });
+      if (signUpError) {
+        return fail(400, { error: signUpError.message, email });
+      }
+      if (!data.session) {
+        return fail(400, {
+          error:
+            'Account created, but email confirmation is still required. In Supabase: Authentication → Sign In / Providers → Email → turn off "Confirm email".',
+          email
+        });
+      }
+      redirect(303, '/onboarding');
+    }
+
+    return fail(400, { error: error.message, email });
   }
 };
