@@ -7,7 +7,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
   return {
     role: url.searchParams.get('role') ?? '',
-    next: url.searchParams.get('next') ?? ''
+    next: url.searchParams.get('next') ?? '',
+    linkError: url.searchParams.get('error') === 'link'
   };
 };
 

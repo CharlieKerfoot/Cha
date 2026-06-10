@@ -24,6 +24,13 @@
       <p class="muted">We'll email you a sign-in link. No password needed.</p>
     {/if}
 
+    {#if data.linkError && !form}
+      <p class="error">
+        That sign-in link didn't work — it may have expired, already been used, or been opened in
+        a different browser than the one that requested it. Enter your email below for a fresh one.
+      </p>
+    {/if}
+
     {#if form?.sent}
       <p class="success">
         ✉️ Check your inbox — we sent a sign-in link to <strong>{form.email}</strong>.

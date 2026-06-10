@@ -27,10 +27,13 @@ SvelteKit (Svelte 5) · Supabase (Postgres, magic-link auth, video storage) · V
    npm run dev
    ```
 
-### Auth notes
+### Auth setup (Supabase dashboard — do all three)
 
-- Magic-link email sign-in works out of the box, but Supabase's built-in mailer is rate-limited (~2 emails/hour) — fine for testing, not for a live demo. For demos, create users in the Supabase dashboard (Authentication → Add user, with a password) and use the "Have a password?" toggle on the login page.
-- Set the **Site URL** in Supabase (Authentication → URL Configuration) to your deployed URL so magic links redirect correctly.
+1. **URL Configuration** (Authentication → URL Configuration): set the Site URL to your production URL, and add `http://localhost:5173/**` plus `https://YOUR-DOMAIN/**` to Redirect URLs.
+2. **Magic Link template** (Authentication → Email Templates → Magic Link): paste `supabase/email-templates/magic-link.html`, subject "Your sign-in link for cha ☕". This switches links to the `token_hash` flow, which works even when the email is opened on a different device, and brands the email body as cha. Without this, the default Supabase template still works, but only in the same browser that requested the link.
+3. **Sender identity** (optional but recommended): the From address stays "Supabase Auth" until you configure custom SMTP (Project Settings → Authentication → SMTP). [Resend](https://resend.com)'s free tier works: create an API key, use host `smtp.resend.com`, username `resend`, password = the API key, sender `cha <hello@yourdomain.com>`. Custom SMTP also removes the built-in mailer's ~2 emails/hour rate limit.
+
+For demo day, also create a couple of password users in the dashboard (Authentication → Add user) and use the "Have a password?" toggle on the login page — no email round-trip on stage.
 
 ## Deploy (Vercel)
 
