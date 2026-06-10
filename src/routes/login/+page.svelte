@@ -13,7 +13,7 @@
     {#if data.role === 'owner'}
       <h1>Welcome, shop owner</h1>
       <p class="muted">
-        Sign in with just your email — no password to remember. You'll be posting a job in under
+        Sign in with just your email, no password to remember. You'll be posting a job in under
         two minutes.
       </p>
     {:else if data.role === 'seeker'}
@@ -26,14 +26,14 @@
 
     {#if data.linkError && !form}
       <p class="error">
-        That sign-in link didn't work — it may have expired, already been used, or been opened in
+        That sign-in link didn't work. It may have expired, already been used, or been opened in
         a different browser than the one that requested it. Enter your email below for a fresh one.
       </p>
     {/if}
 
     {#if form?.sent}
       <p class="success">
-        ✉️ Check your inbox — we sent a sign-in link to <strong>{form.email}</strong>.
+        Check your inbox. We sent a sign-in link to <strong>{form.email}</strong>.
       </p>
     {:else}
       <form
@@ -54,7 +54,7 @@
         {#if usePassword}
           <label for="password">Password</label>
           <input id="password" type="password" name="password" required minlength="6" />
-          <p class="muted hint">New here? Same form — we'll create your account automatically.</p>
+          <p class="muted hint">New here? Same form. We'll create your account automatically.</p>
         {/if}
 
         {#if form?.error}
@@ -98,13 +98,5 @@
   .hint {
     font-size: 0.82rem;
     margin: 0.35rem 0 0;
-  }
-
-  input[type='password'] {
-    width: 100%;
-    padding: 0.55rem 0.7rem;
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    font-size: 1rem;
   }
 </style>

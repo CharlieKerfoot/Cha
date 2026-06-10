@@ -42,11 +42,19 @@
     radiusMiles={Number(data.seeker.radius_miles)}
     shops={shopPins}
   />
+{:else if !data.anyShopsHiring}
+  <div class="card empty">
+    <h3>No shops are looking for help right now</h3>
+    <p class="muted">
+      Shop owners are onboarding now — your profile and video are ready the moment the first job
+      goes up. Check back soon.
+    </p>
+  </div>
 {:else}
   <div class="card empty">
-    <h3>No shops in range yet</h3>
+    <h3>No shops in your range yet</h3>
     <p class="muted">
-      Shops are joining cha now, so check back soon. Meanwhile, try widening your radius or
+      There are shops hiring, but none inside your travel range. Try widening your radius or
       adding more shifts on <a href="/seeker/profile">your profile</a>.
     </p>
   </div>

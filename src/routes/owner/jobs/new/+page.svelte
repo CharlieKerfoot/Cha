@@ -13,7 +13,7 @@
     <h1>Post your first job</h1>
     <p class="muted">
       As soon as you post, you'll see every candidate near {data.shop.name} who can work these
-      shifts — with their intro videos.
+      shifts, with their intro videos.
     </p>
   {:else}
     <h1>Post a job at {data.shop.name}</h1>

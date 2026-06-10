@@ -16,7 +16,12 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 
   const [{ data: jobs }, { data: applications }] = await Promise.all([
-    locals.supabase.from('jobs').select('*, shops(*)').eq('is_open', true),
+    // !inner + owner filter: jobs from real shops only, never seed data
+    locals.supabase
+      .from('jobs')
+      .select('*, shops!inner(*)')
+      .eq('is_open', true)
+      .not('shops.owner_id', 'is', null),
     locals.supabase.from('applications').select('id, job_id, status').eq('seeker_id', userId)
   ]);
 
@@ -25,6 +30,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   return {
     seeker: seeker as Seeker,
+    anyShopsHiring: (jobs ?? []).length > 0,
     matches: matches.map((m) => ({
       ...m,
       appliedStatus: appliedByJob.get(m.job.id) ?? null

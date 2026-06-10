@@ -35,7 +35,7 @@ export function distanceMiles(
   return 2 * EARTH_RADIUS_MILES * Math.asin(Math.sqrt(h));
 }
 
-/** Closest named neighborhood — used as a human label for a map pin. */
+/** Closest named neighborhood, used as a human label for a map pin. */
 export function nearestNeighborhood(lat: number, lng: number): string {
   let best = 'San Francisco';
   let bestDistance = Infinity;

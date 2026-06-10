@@ -6,7 +6,7 @@
   const STATUS_COPY: Record<string, string> = {
     new: 'Application sent',
     seen: 'The shop has seen your video',
-    interview: 'They want to meet you — expect a message',
+    interview: 'They want to meet you, expect a message',
     hired: 'You got it!',
     passed: 'They went another way this time'
   };

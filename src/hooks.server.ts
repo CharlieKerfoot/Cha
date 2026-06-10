@@ -5,7 +5,7 @@ import { redirect, type Handle } from '@sveltejs/kit';
 export const handle: Handle = async ({ event, resolve }) => {
   if (!env.PUBLIC_SUPABASE_URL || !env.PUBLIC_SUPABASE_ANON_KEY) {
     return new Response(
-      'cha is almost live — set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY, then redeploy.',
+      'cha is almost live. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY, then redeploy.',
       { status: 503, headers: { 'content-type': 'text/plain' } }
     );
   }

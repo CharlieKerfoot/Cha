@@ -2,27 +2,55 @@
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
+
+  let hoodCount = $derived(new Set(data.shops.map((s) => s.neighborhood)).size);
 </script>
 
 <section class="hero">
   <div class="pitch">
     <p class="meta-mono kicker">HIRING FOR SF COFFEE SHOPS</p>
-    <h1>Hiring a barista shouldn't take <span class="highlight">a month of group texts</span>.</h1>
+    <h1>Hiring a barista shouldn't take a month of group texts.</h1>
     <p class="sub">
-      We talked to coffee shop owners around San Francisco and heard the same two things
-      everywhere: hiring is hard, and there's no system for it. The owner is behind the counter
-      pulling shots, and the next hire comes from a group chat or a friend of a friend.
+      We talked to coffee shop owners around San Francisco and heard the same thing everywhere:
+      hiring is hard and there's no system for it, just group chats and friends of friends.
+      cha is the system.
     </p>
     <div class="ctas">
       <a class="btn" href="/login?role=owner">I run a coffee shop</a>
       <a class="btn secondary" href="/login?role=seeker">I'm looking for cafe work</a>
     </div>
+    {#if data.shops.length > 0}
+      <p class="meta-mono proof">
+        {data.shops.length} SHOPS HIRING · {hoodCount} NEIGHBORHOODS · NO RESUMES
+      </p>
+    {/if}
   </div>
-  <aside class="sign" aria-hidden="true">
-    <p class="sign-head">Help wanted</p>
-    <p class="meta-mono">BARISTA · WEEKDAY MORNINGS</p>
-    <p class="meta-mono">TUE–SAT · 6A–2P · MISSION</p>
-    <p class="sign-note">Ask for the owner. She's the one at the machine.</p>
+
+  <!-- The shop window: the product, told in its own ephemera. -->
+  <aside class="window" aria-hidden="true">
+    <div class="item sign">
+      <span class="tape"></span>
+      <p class="sign-head">Help wanted</p>
+      <p class="meta-mono">BARISTA · WEEKDAY MORNINGS</p>
+      <p class="meta-mono">TUE–SAT · 6A–2P · MISSION</p>
+      <p class="sign-note">Ask for the owner. She's the one at the machine.</p>
+    </div>
+
+    <div class="item booth">
+      <span class="tape"></span>
+      <div class="frame play">▶</div>
+      <div class="frame"></div>
+      <div class="frame"></div>
+      <p class="meta-mono booth-label">30-SECOND HELLO</p>
+    </div>
+
+    <div class="item ticket">
+      <span class="tape"></span>
+      <p class="ticket-name">Maya R.</p>
+      <p class="meta-mono">MISSION · 0.4 MI · 92% FIT</p>
+      <p class="meta-mono">CAN WORK · TUE–SAT · 6A–2P</p>
+      <span class="stamp">Hired</span>
+    </div>
   </aside>
 </section>
 
@@ -79,16 +107,25 @@
   </section>
 {/if}
 
+<section class="closer">
+  <h2>Put the sign up</h2>
+  <p class="muted">Posting takes one form. The candidates are already here.</p>
+  <div class="ctas">
+    <a class="btn" href="/login?role=owner">Post a job</a>
+    <a class="btn secondary" href="/login?role=seeker">Find cafe work</a>
+  </div>
+</section>
+
 <style>
   .hero {
     display: flex;
     gap: 3rem;
     align-items: center;
-    padding: 3.5rem 0 2rem;
+    padding: 2.5rem 0 2rem;
   }
 
   .pitch {
-    max-width: 640px;
+    max-width: 600px;
   }
 
   .kicker {
@@ -97,7 +134,7 @@
   }
 
   .hero h1 {
-    font-size: clamp(2.6rem, 6vw, 4rem);
+    font-size: clamp(2.5rem, 5.5vw, 3.7rem);
     line-height: 1.06;
   }
 
@@ -114,26 +151,58 @@
     flex-wrap: wrap;
   }
 
-  /* The sign in the window. Decorative, hidden on small screens. */
-  .sign {
+  .proof {
+    margin-top: 1.4rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* ---- The shop window cluster ---- */
+
+  .window {
+    position: relative;
+    flex-shrink: 0;
+    width: 380px;
+    height: 460px;
+  }
+
+  .item {
+    position: absolute;
     background: var(--surface);
     border: 1.5px solid var(--ink);
     border-radius: 6px;
-    padding: 1.5rem 1.75rem;
-    transform: rotate(2deg);
-    flex-shrink: 0;
-    max-width: 270px;
+  }
+
+  /* Riso-pink washi tape holding each piece up */
+  .tape {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 56px;
+    height: 18px;
+    margin-left: -28px;
+    background: var(--pink);
+    opacity: 0.85;
+    transform: rotate(-3deg);
+  }
+
+  .sign {
+    top: 0;
+    left: 0;
+    width: 250px;
+    padding: 1.25rem 1.5rem;
+    transform: rotate(-2deg);
+    z-index: 2;
   }
 
   .sign-head {
     font-family: var(--font-display);
     font-variation-settings: 'SOFT' 60, 'WONK' 1;
     font-weight: 650;
-    font-size: 2rem;
+    font-size: 1.8rem;
     line-height: 1;
     text-transform: uppercase;
     color: var(--red);
-    margin: 0 0 0.8rem;
+    margin: 0 0 0.7rem;
   }
 
   .sign p {
@@ -141,17 +210,72 @@
   }
 
   .sign-note {
-    margin-top: 0.9rem;
+    margin-top: 0.8rem;
     font-style: italic;
     color: var(--muted);
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 
-  @media (max-width: 760px) {
-    .sign {
+  .booth {
+    top: 30px;
+    right: 0;
+    width: 96px;
+    padding: 0.6rem 0.6rem 0.5rem;
+    transform: rotate(3deg);
+    z-index: 1;
+  }
+
+  .frame {
+    height: 64px;
+    background: var(--ink);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper);
+    font-size: 1rem;
+  }
+
+  .booth-label {
+    font-size: 0.58rem;
+    text-align: center;
+    margin: 0.3rem 0 0;
+  }
+
+  .ticket {
+    bottom: 0;
+    left: 56px;
+    width: 270px;
+    padding: 1.1rem 1.3rem;
+    border-top-style: dashed;
+    transform: rotate(1.5deg);
+    z-index: 3;
+  }
+
+  .ticket-name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0 0 0.4rem;
+  }
+
+  .ticket p {
+    margin: 0.25rem 0;
+  }
+
+  .ticket .stamp {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+  }
+
+  @media (max-width: 880px) {
+    .window {
       display: none;
     }
   }
+
+  /* ---- Below the fold ---- */
 
   .why {
     margin-top: 3.5rem;
@@ -190,5 +314,16 @@
 
   .shop .badge {
     margin-left: 0.4rem;
+  }
+
+  .closer {
+    margin-top: 4rem;
+    border-top: 1.5px dashed var(--line);
+    padding-top: 2.5rem;
+    text-align: center;
+  }
+
+  .closer .ctas {
+    justify-content: center;
   }
 </style>

@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   }
 
   // token_hash flow: customized email template linking straight here.
-  // Works in any browser — the recommended setup (see README).
+  // Works in any browser, the recommended setup (see README).
   const token_hash = url.searchParams.get('token_hash');
   const type = url.searchParams.get('type') as EmailOtpType | null;
   if (token_hash && type) {

@@ -24,7 +24,7 @@
   {#if data.welcome}
     <h1>Set up your profile</h1>
     <p class="muted">
-      This takes about two minutes. The video is your application — one recording goes to every
+      This takes about two minutes. The video is your application. One recording goes to every
       shop you apply to.
     </p>
   {:else}
