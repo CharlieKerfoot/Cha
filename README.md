@@ -20,7 +20,7 @@ SvelteKit (Svelte 5) · Supabase (Postgres, magic-link auth, video storage) · V
 ## Setup
 
 1. **Create a Supabase project** at [database.new](https://database.new).
-2. In the Supabase **SQL editor**, run `supabase/schema.sql`, then `supabase/seed.sql` (demo shops + candidates).
+2. In the Supabase **SQL editor**, run `supabase/schema.sql`, the `migration-*.sql` files in order, then `supabase/directory-seed.sql` (the claimable SF cafe directory — powers onboarding search, never displayed as listings). No fake shops or fake users: all visible content is real accounts.
 3. Copy `.env.example` to `.env` and fill in your project URL and anon key (Supabase dashboard → Settings → API).
 4. ```sh
    npm install
@@ -45,7 +45,7 @@ vercel --prod
 ## Project layout
 
 - `supabase/schema.sql` — tables, row-level security, storage bucket + policies
-- `supabase/seed.sql` — 10 SF shops with open roles, 6 demo candidates
+- `supabase/directory-seed.sql` — 785 real SF cafes (OpenStreetMap) for claim-your-shop onboarding
 - `src/lib/matching.ts` — the match score (50% proximity, 50% shift overlap)
 - `src/lib/components/VideoRecorder.svelte` — in-browser 30s recording via MediaRecorder
 - `src/routes/seeker/*` — candidate flow · `src/routes/owner/*` — shop flow

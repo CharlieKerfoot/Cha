@@ -55,6 +55,14 @@
     <h3>No jobs yet</h3>
     <p class="muted">Post one and we'll show you every candidate nearby who fits.</p>
   </div>
+{:else if data.applications.length === 0 && data.pool.length === 0}
+  <div class="card empty">
+    <h3>Your sign is in the window</h3>
+    <p class="muted">
+      The job is live. As candidates join cha and set their range near you, they'll show up here
+      with their intro videos — applicants first, then everyone nearby who fits your shifts.
+    </p>
+  </div>
 {/if}
 
 {#if data.applications.length > 0}
