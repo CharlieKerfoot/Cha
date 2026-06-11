@@ -20,6 +20,7 @@ export const actions: Actions = {
     const vibe = String(form.get('vibe') ?? '').trim();
     const contact = String(form.get('contact') ?? '').trim();
     const websiteRaw = String(form.get('website') ?? '').trim();
+    const directoryId = String(form.get('directory_id') ?? '').trim() || null;
     const lat = Number(form.get('lat'));
     const lng = Number(form.get('lng'));
 
@@ -42,9 +43,18 @@ export const actions: Actions = {
       lng,
       vibe,
       website,
-      contact
+      contact,
+      directory_id: directoryId
     });
-    if (error) return fail(500, { error: error.message });
+    if (error) {
+      if (error.message.includes('shops_directory_id_unique') || error.code === '23505') {
+        return fail(409, {
+          error:
+            'That shop has already been claimed on cha. If it’s yours, email hello@cha.coffee and we’ll sort it out.'
+        });
+      }
+      return fail(500, { error: error.message });
+    }
 
     redirect(303, '/owner/jobs/new?first=1');
   }

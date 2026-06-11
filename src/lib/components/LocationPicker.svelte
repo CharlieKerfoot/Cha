@@ -73,6 +73,17 @@
       circle.setRadius(radiusMiles * MILES_TO_METERS);
     }
   });
+
+  // External prefill (e.g. picking a shop from the directory) moves the pin.
+  $effect(() => {
+    if (marker && map) {
+      const p = marker.getLatLng();
+      if (Math.abs(p.lat - lat) > 1e-6 || Math.abs(p.lng - lng) > 1e-6) {
+        marker.setLatLng([lat, lng]);
+        map.panTo([lat, lng]);
+      }
+    }
+  });
 </script>
 
 <div class="map" bind:this={mapEl}></div>
