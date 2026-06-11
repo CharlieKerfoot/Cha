@@ -99,6 +99,35 @@
     </div>
 
     <div class="card section">
+      <h3>Experience <span class="muted">(optional)</span></h3>
+      <p class="muted">
+        New to coffee? Leave this blank, plenty of shops train. If you've worked a counter before,
+        owners like to know.
+      </p>
+
+      <label for="years_experience">Years working coffee or food service</label>
+      <input
+        id="years_experience"
+        type="number"
+        name="years_experience"
+        min="0"
+        max="50"
+        step="0.5"
+        placeholder="Ex: 2"
+        value={data.seeker?.years_experience ?? ''}
+      />
+
+      <label for="experience">Where you've worked</label>
+      <textarea
+        id="experience"
+        name="experience"
+        rows="2"
+        placeholder="Ex: Blue Bottle on Mint St (2 yrs), opened the bar, trained new hires."
+        >{data.seeker?.experience ?? ''}</textarea
+      >
+    </div>
+
+    <div class="card section">
       <h3>The basics</h3>
       <label class="check">
         <input

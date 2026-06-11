@@ -82,11 +82,11 @@
     </div>
     <div class="card">
       <p class="meta-mono kicker">FOR BARISTAS</p>
-      <h3>One video instead of a resume</h3>
+      <h3>Find the perfect fit for you</h3>
       <p class="muted">
-        Pick your neighborhood, how far you'll travel, and the shifts you can work. Record one
-        30-second hello and it goes to every shop you apply to. Shops near you see you first,
-        ranked by distance and shift fit.
+        No more walking shop to shop asking who's hiring. Every open job near you is in one
+        place, so you can compare pay, hours, and distance before you apply. Record one
+        30-second hello and it goes to every shop you pick.
       </p>
     </div>
   </div>

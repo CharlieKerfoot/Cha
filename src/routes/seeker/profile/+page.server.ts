@@ -24,6 +24,9 @@ export const actions: Actions = {
     const radius = Number(form.get('radius_miles') ?? 3);
     const shifts = form.getAll('shifts').map(String);
     const bio = String(form.get('bio') ?? '').trim();
+    const experience = String(form.get('experience') ?? '').trim();
+    const yearsRaw = String(form.get('years_experience') ?? '').trim();
+    const years = yearsRaw === '' ? null : Number(yearsRaw);
     const videoUrl = String(form.get('video_url') ?? '').trim();
     const basics = form.get('basics_confirmed') === 'on';
 
@@ -36,6 +39,9 @@ export const actions: Actions = {
     if (!basics) {
       return fail(400, { error: 'Please confirm the basics to continue.' });
     }
+    if (years !== null && (!Number.isFinite(years) || years < 0 || years > 50)) {
+      return fail(400, { error: 'Years of experience should be a number between 0 and 50.' });
+    }
 
     const { error } = await locals.supabase.from('seekers').upsert({
       profile_id: user.id,
@@ -45,6 +51,8 @@ export const actions: Actions = {
       radius_miles: Math.min(Math.max(radius, 0.5), 15),
       shifts,
       bio,
+      experience,
+      years_experience: years,
       ...(videoUrl ? { video_url: videoUrl } : {}),
       basics_confirmed: basics
     });

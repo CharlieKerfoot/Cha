@@ -52,6 +52,17 @@
           <p class="muted copy">{STATUS_COPY[app.status]}</p>
         </div>
       </div>
+
+      {#if (app.status === 'interview' || app.status === 'hired') && (app.note || shop?.contact)}
+        <div class="invite">
+          {#if app.note}
+            <p class="note">"{app.note}"</p>
+          {/if}
+          {#if shop?.contact}
+            <p class="meta-mono reach">Reach them · {shop.contact}</p>
+          {/if}
+        </div>
+      {/if}
     {/each}
   </div>
 {/if}
@@ -94,5 +105,22 @@
     text-align: center;
     padding: 2.5rem 1rem;
     margin-top: 1rem;
+  }
+
+  .invite {
+    width: 100%;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1.5px dashed var(--line);
+  }
+
+  .note {
+    font-style: italic;
+    margin: 0 0 0.3rem;
+  }
+
+  .reach {
+    margin: 0;
+    color: var(--green);
   }
 </style>

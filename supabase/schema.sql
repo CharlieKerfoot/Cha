@@ -15,6 +15,8 @@ create table public.seekers (
   radius_miles numeric not null default 3,
   shifts text[] not null default '{}',
   bio text not null default '',
+  years_experience numeric,
+  experience text not null default '',
   video_url text,
   basics_confirmed boolean not null default false
 );
@@ -28,6 +30,7 @@ create table public.shops (
   lat double precision not null,
   lng double precision not null,
   vibe text not null default '',
+  contact text not null default '',
   created_at timestamptz not null default now()
 );
 

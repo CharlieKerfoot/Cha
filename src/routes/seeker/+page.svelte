@@ -46,7 +46,7 @@
   <div class="card empty">
     <h3>No shops are looking for help right now</h3>
     <p class="muted">
-      Shop owners are onboarding now — your profile and video are ready the moment the first job
+      Shop owners are onboarding now. Your profile and video are ready the moment the first job
       goes up. Check back soon.
     </p>
   </div>

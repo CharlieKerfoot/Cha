@@ -59,5 +59,33 @@ export const actions: Actions = {
     const { error } = await locals.supabase.from('applications').update({ status }).eq('id', id);
     if (error) return fail(500, { error: error.message });
     return { ok: true };
+  },
+
+  // Owner taps "Interested": move to interview and attach a short note. The note
+  // plus the shop's contact info is what the candidate sees on their Applied page.
+  invite: async ({ request, locals }) => {
+    const form = await request.formData();
+    const id = String(form.get('id') ?? '');
+    const note = String(form.get('note') ?? '').trim();
+    if (!id) return fail(400, { error: 'Missing applicant.' });
+    const { error } = await locals.supabase
+      .from('applications')
+      .update({ status: 'interview', note })
+      .eq('id', id);
+    if (error) return fail(500, { error: error.message });
+    return { ok: true };
+  },
+
+  // Save how candidates reach the shop once invited. Stored on the shop, revealed
+  // to a candidate only after they're moved to interview.
+  contact: async ({ request, locals }) => {
+    const form = await request.formData();
+    const contact = String(form.get('contact') ?? '').trim();
+    const { error } = await locals.supabase
+      .from('shops')
+      .update({ contact })
+      .eq('owner_id', locals.user!.id);
+    if (error) return fail(500, { error: error.message });
+    return { ok: true };
   }
 };

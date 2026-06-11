@@ -22,5 +22,5 @@ export const GET: RequestHandler = async ({ url, locals }) => {
     if (!error) redirect(303, next);
   }
 
-  redirect(303, '/login?error=link');
+  redirect(303, '/login');
 };

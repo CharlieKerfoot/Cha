@@ -18,6 +18,7 @@ export const actions: Actions = {
     const name = String(form.get('name') ?? '').trim();
     const address = String(form.get('address') ?? '').trim();
     const vibe = String(form.get('vibe') ?? '').trim();
+    const contact = String(form.get('contact') ?? '').trim();
     const websiteRaw = String(form.get('website') ?? '').trim();
     const lat = Number(form.get('lat'));
     const lng = Number(form.get('lng'));
@@ -40,7 +41,8 @@ export const actions: Actions = {
       lat,
       lng,
       vibe,
-      website
+      website,
+      contact
     });
     if (error) return fail(500, { error: error.message });
 

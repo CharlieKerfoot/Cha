@@ -7,70 +7,79 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
   return {
     role: url.searchParams.get('role') ?? '',
-    next: url.searchParams.get('next') ?? '',
-    linkError: url.searchParams.get('error') === 'link'
+    next: url.searchParams.get('next') ?? ''
   };
 };
 
-export const actions: Actions = {
-  magic: async ({ request, locals, url }) => {
-    const form = await request.formData();
-    const email = String(form.get('email') ?? '').trim();
-    const next = String(form.get('next') ?? '');
-    if (!email.includes('@')) {
-      return fail(400, { error: 'Enter a valid email address.', email });
-    }
-    const { error } = await locals.supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${url.origin}/auth/confirm?next=${encodeURIComponent(next || '/onboarding')}`
-      }
-    });
-    if (error) {
-      return fail(400, { error: error.message, email });
-    }
-    return { sent: true, email };
-  },
+function safeNext(next: string): string {
+  return next.startsWith('/') && !next.startsWith('//') ? next : '/onboarding';
+}
 
-  password: async ({ request, locals }) => {
+function validate(email: string, password: string) {
+  if (!email.includes('@')) {
+    return 'Enter a valid email address.';
+  }
+  if (password.length < 6) {
+    return 'Password needs at least 6 characters.';
+  }
+  return null;
+}
+
+export const actions: Actions = {
+  signin: async ({ request, locals }) => {
     const form = await request.formData();
     const email = String(form.get('email') ?? '').trim();
     const password = String(form.get('password') ?? '');
-    if (!email.includes('@')) {
-      return fail(400, { error: 'Enter a valid email address.', email });
-    }
-    if (password.length < 6) {
-      return fail(400, { error: 'Password needs at least 6 characters.', email });
+    const next = String(form.get('next') ?? '');
+
+    const invalid = validate(email, password);
+    if (invalid) {
+      return fail(400, { error: invalid, email });
     }
 
     const { error } = await locals.supabase.auth.signInWithPassword({ email, password });
-    if (!error) {
-      redirect(303, '/onboarding');
-    }
-
-    // No account yet (or wrong password): try creating one on the spot.
-    if (error.message.toLowerCase().includes('invalid login credentials')) {
-      const { data, error: signUpError } = await locals.supabase.auth.signUp({ email, password });
-      if (signUpError) {
-        if (signUpError.message.toLowerCase().includes('already registered')) {
-          return fail(400, {
-            error:
-              'This email has an account, but that password doesn’t match it. (If you previously signed in with an email link, the account has no password. Use a different email, or ask us to reset it.)',
-            email
-          });
-        }
-        return fail(400, { error: signUpError.message, email });
-      }
-      if (!data.session) {
+    if (error) {
+      if (error.message.toLowerCase().includes('invalid login credentials')) {
         return fail(400, {
-          error:
-            'Account created, but email confirmation is still required. In Supabase: Authentication → Sign In / Providers → Email → turn off "Confirm email".',
+          error: "That email and password don't match. New here? Create an account instead.",
           email
         });
       }
-      redirect(303, '/onboarding');
+      return fail(400, { error: error.message, email });
     }
 
-    return fail(400, { error: error.message, email });
+    redirect(303, safeNext(next));
+  },
+
+  signup: async ({ request, locals }) => {
+    const form = await request.formData();
+    const email = String(form.get('email') ?? '').trim();
+    const password = String(form.get('password') ?? '');
+    const next = String(form.get('next') ?? '');
+
+    const invalid = validate(email, password);
+    if (invalid) {
+      return fail(400, { error: invalid, email });
+    }
+
+    const { data, error } = await locals.supabase.auth.signUp({ email, password });
+    if (error) {
+      if (error.message.toLowerCase().includes('already registered')) {
+        return fail(400, {
+          error: 'This email already has an account. Sign in instead.',
+          email
+        });
+      }
+      return fail(400, { error: error.message, email });
+    }
+    if (!data.session) {
+      return fail(400, {
+        error:
+          'Account created, but email confirmation is still required. In Supabase: Authentication → Sign In / Providers → Email → turn off "Confirm email".',
+        email
+      });
+    }
+
+    redirect(303, safeNext(next));
   }
 };

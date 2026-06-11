@@ -14,6 +14,8 @@ export interface Seeker {
   radius_miles: number;
   shifts: string[];
   bio: string;
+  years_experience: number | null;
+  experience: string;
   video_url: string | null;
   basics_confirmed: boolean;
   profiles?: Profile;
@@ -29,6 +31,7 @@ export interface Shop {
   lng: number;
   vibe: string;
   website: string;
+  contact: string;
 }
 
 export interface Job {

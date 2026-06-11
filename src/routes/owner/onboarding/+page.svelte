@@ -29,6 +29,10 @@
     <label for="website">Website <span class="muted">(optional)</span></label>
     <input id="website" type="text" name="website" placeholder="pinholecoffee.com" />
 
+    <label for="contact">How candidates reach you <span class="muted">(optional)</span></label>
+    <input id="contact" type="text" name="contact" placeholder="Text 415-555-0142" />
+    <p class="muted hint">Shared only with people you mark Interested, for setting up interviews.</p>
+
     <label for="vibe">Describe your shop's vibe in a sentence</label>
     <input
       id="vibe"

@@ -48,5 +48,10 @@ export function scoreSeekers(shop: Shop, jobShifts: string[], seekers: Seeker[])
     const score = Math.round((proximity * 0.5 + overlap * 0.5) * 100);
     results.push({ seeker, distance, overlap, score });
   }
-  return results.sort((a, b) => b.score - a.score);
+  // Experience is a tiebreaker, never a gate: when two candidates fit equally,
+  // the one with more time on the counter ranks first. Owners asked for this.
+  return results.sort(
+    (a, b) =>
+      b.score - a.score || (b.seeker.years_experience ?? 0) - (a.seeker.years_experience ?? 0)
+  );
 }
