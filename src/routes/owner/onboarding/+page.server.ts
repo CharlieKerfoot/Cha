@@ -34,7 +34,7 @@ export const actions: Actions = {
       website = `https://${website}`;
     }
 
-    const { error } = await locals.supabase.from('shops').insert({
+    const row: Record<string, unknown> = {
       owner_id: locals.user!.id,
       name,
       neighborhood: nearestNeighborhood(lat, lng),
@@ -43,9 +43,16 @@ export const actions: Actions = {
       lng,
       vibe,
       website,
-      contact,
-      directory_id: directoryId
-    });
+      contact
+    };
+    if (directoryId) row.directory_id = directoryId;
+
+    let { error } = await locals.supabase.from('shops').insert(row);
+    // Tolerate a database that hasn't run migration-4 yet (no directory_id column).
+    if (error && error.code === 'PGRST204' && row.directory_id) {
+      delete row.directory_id;
+      ({ error } = await locals.supabase.from('shops').insert(row));
+    }
     if (error) {
       if (error.message.includes('shops_directory_id_unique') || error.code === '23505') {
         return fail(409, {
