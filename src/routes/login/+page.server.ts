@@ -55,7 +55,12 @@ export const actions: Actions = {
     const form = await request.formData();
     const email = String(form.get('email') ?? '').trim();
     const password = String(form.get('password') ?? '');
-    const next = String(form.get('next') ?? '');
+    const role = String(form.get('role') ?? '');
+    let next = String(form.get('next') ?? '');
+    // Landing CTAs already told us who this is; onboarding shouldn't re-ask.
+    if (!next && (role === 'owner' || role === 'seeker')) {
+      next = `/onboarding?role=${role}`;
+    }
 
     const invalid = validate(email, password);
     if (invalid) {

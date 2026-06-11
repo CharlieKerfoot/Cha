@@ -43,6 +43,7 @@
       }}
     >
       <input type="hidden" name="next" value={data.next} />
+      <input type="hidden" name="role" value={data.role} />
       <label for="email">Email</label>
       <input
         id="email"

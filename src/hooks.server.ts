@@ -57,7 +57,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const path = event.url.pathname;
   const needsAuth = path.startsWith('/seeker') || path.startsWith('/owner') || path === '/onboarding';
   if (needsAuth && !user) {
-    redirect(303, `/login?next=${encodeURIComponent(path)}`);
+    redirect(303, `/login?next=${encodeURIComponent(path + event.url.search)}`);
   }
   if (user && !event.locals.profile && needsAuth && path !== '/onboarding') {
     redirect(303, '/onboarding');

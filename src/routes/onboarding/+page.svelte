@@ -1,15 +1,24 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { ActionData } from './$types';
+  import type { ActionData, PageData } from './$types';
 
-  let { form }: { form: ActionData } = $props();
+  let { data, form }: { data: PageData; form: ActionData } = $props();
 
+  // Local state only drives the radio picker shown when no role was preselected.
   let role = $state('');
 </script>
 
 <div class="wrap">
-  <h1>Welcome to cha</h1>
-  <p class="muted">Two quick things and you're in.</p>
+  {#if data.role === 'owner'}
+    <h1>Welcome to cha</h1>
+    <p class="muted">One quick thing, then you set up your shop.</p>
+  {:else if data.role === 'seeker'}
+    <h1>Welcome to cha</h1>
+    <p class="muted">One quick thing, then you build your profile.</p>
+  {:else}
+    <h1>Welcome to cha</h1>
+    <p class="muted">Two quick things and you're in.</p>
+  {/if}
 
   <form method="POST" use:enhance>
     <label for="display_name">Your name</label>
@@ -22,19 +31,23 @@
       placeholder="First and last name"
     />
 
-    <label for="role-group">I'm here to…</label>
-    <div id="role-group" class="roles">
-      <label class="role" class:active={role === 'seeker'}>
-        <input type="radio" name="role" value="seeker" bind:group={role} />
-        <strong>Find a coffee job</strong>
-        <span class="muted">Barista, counter, whatever fits</span>
-      </label>
-      <label class="role" class:active={role === 'owner'}>
-        <input type="radio" name="role" value="owner" bind:group={role} />
-        <strong>Hire for my shop</strong>
-        <span class="muted">I run a coffee shop</span>
-      </label>
-    </div>
+    {#if data.role}
+      <input type="hidden" name="role" value={data.role} />
+    {:else}
+      <label for="role-group">I'm here to…</label>
+      <div id="role-group" class="roles">
+        <label class="role" class:active={role === 'seeker'}>
+          <input type="radio" name="role" value="seeker" bind:group={role} />
+          <strong>Find a coffee job</strong>
+          <span class="muted">Barista, counter, whatever fits</span>
+        </label>
+        <label class="role" class:active={role === 'owner'}>
+          <input type="radio" name="role" value="owner" bind:group={role} />
+          <strong>Hire for my shop</strong>
+          <span class="muted">I run a coffee shop</span>
+        </label>
+      </div>
+    {/if}
 
     {#if form?.error}
       <p class="error">{form.error}</p>
@@ -42,6 +55,12 @@
 
     <button class="btn submit" type="submit">Continue</button>
   </form>
+
+  {#if data.role === 'owner'}
+    <p class="muted switch">Looking for work instead? <a href="/onboarding?role=seeker">Switch</a></p>
+  {:else if data.role === 'seeker'}
+    <p class="muted switch">Hiring for a shop instead? <a href="/onboarding?role=owner">Switch</a></p>
+  {/if}
 </div>
 
 <style>
@@ -83,5 +102,11 @@
   .submit {
     margin-top: 1.4rem;
     width: 100%;
+  }
+
+  .switch {
+    margin-top: 0.9rem;
+    text-align: center;
+    font-size: 0.85rem;
   }
 </style>
